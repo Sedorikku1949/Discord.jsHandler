@@ -1,5 +1,5 @@
 const { Client } = require("discord.js");
-const { token, prefix } = require("../_storage/config.json");
+const { token, prefix } = require("../config.json");
 
 class BotHandler extends Client {
 	constructor() {
