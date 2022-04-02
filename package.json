@@ -10,6 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^13.6.0"
+    "better-sqlite3": "^7.5.0",
+    "discord.js": "^13.6.0",
+    "enmap": "^5.8.13"
+  },
+  "devDependencies": {
+    "prettier": "^2.6.1"
   }
 }

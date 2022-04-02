@@ -19,6 +19,53 @@ function queryFiles(dir, options = {}){
 	return filesDir;
 }
 
+/*
+$ -color
+    n:noir
+    r:red
+    g:green
+    y:yellow
+    b:blue
+    m:magenta
+    c:cyan
+    w:white
+    0:reset
+    1:bold
+    2:faint
+    3:italic
+    4:underline
+
+$$ -background
+    n:noir
+    r:red
+    g:green
+    y:yellow
+    b:blue
+    m:magenta
+    c:cyan
+    w:white
+*/
+const colors = {$:{n:30, r:31, g:32, y:33, b:34, m:35, c:36, w:97, 0:0, 1:1, 2:2, 3:3, 4:4}, $$:{n:40, r:41, g:42, y:43, b:44, m:45, c:46, w:107}}
+
+function colorized(str){
+	if (str.constructor.name !== "String") throw new Error("Argument must be a string");
+	return str.replace(/\${1,2}([a-z0-4])/g, (t)=>{
+		const color = t.startsWith("$$") ? colors["$$"][t[t.length-1]] : colors["$"][t[t.length-1]];
+		if (color === undefined) return "";
+		else return `\x1b[${color}m`;
+	})+"\x1b[0m"
+}
+
+function decolorize(string){
+	if(typeof string !== "string")throw new Error("argument must be a string")
+	const reg = /\[[0-9]{1,2}m/g
+	return string.replace(reg, "")
+}
 
 // export all functions
-module.exports = { queryFiles }
+module.exports = {
+	queryFiles,
+	colorized,
+	decolorize,
+	colors
+}
