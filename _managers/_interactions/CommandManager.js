@@ -107,7 +107,7 @@ class CommandManager {
 	}
 
 	parseArgs(object, prefix){
-		const type = { SUB_COMMAND: 1, SUB_COMMAND_GROUP: 2, STRING: 3, INTEGER: 4, BOOLEAN: 5, USER: 6, CHANNEL: 7, ROLE: 8, MENTIONNANLE: 9, NUMBER: 10 };
+		const type = { SUB_COMMAND: 1, SUB_COMMAND_GROUP: 2, STRING: 3, INTEGER: 4, BOOLEAN: 5, USER: 6, CHANNEL: 7, ROLE: 8, MENTIONNABLE: 9, NUMBER: 10 };
 		const methods = {
 			join: function(j){ return this.map(t=>t.value).join(j[0]) },
 			getName: function(n, all = false){ return all ? this.filter(t => t.name ===n ) : this.find( t=> t.name === n ) },
