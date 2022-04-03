@@ -7,6 +7,12 @@ class CommandManager {
 		this.client = client;
 		this.database = database;
 		this.commands = this.database.interactions.cmd;
+
+		this.database.intervals.add(() => {
+			[...database.cooldowns.commands].forEach(([id, timestamp]) => {
+				if (timestamp - Date.now() < 0) database.cooldowns.commands.delete(id);
+			})
+		}, 60000)
 	}
 
 	cooldown(interaction, authorId, timeout, deffered){
@@ -42,7 +48,7 @@ class CommandManager {
 			// cooldown check
 			if (database.cooldowns.commands.get(authorId) && (database.cooldowns.commands.get(authorId) - Date.now() > 0)) return this.cooldown(interaction, authorId, database.cooldowns.commands.get(authorId) - Date.now(), cmd.config.system.defer);
 			database.cooldowns.commands.set(authorId, Date.now() + (cmd.config.system.cooldown || 500));
-			
+
 			// try catch
 			try {
 				cmdExecutable = new Command(cmdExecutable);
