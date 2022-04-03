@@ -1,6 +1,7 @@
 const { Client } = require("discord.js");
 const { token, prefix } = require("../config.json");
 const Database = require("./Database");
+const Command = require("./_interactions/Command");
 const { readdirSync } = require("fs");
 
 class BotHandler extends Client {
@@ -11,6 +12,7 @@ class BotHandler extends Client {
 		this.prefix = prefix;
 		this.utils = require("./Utils");
 		this.database = new Database(this);
+		require("./Prototype");
 
 		// product/dev
 		if (process.argv.includes("dev")) {
@@ -53,9 +55,9 @@ class BotHandler extends Client {
 		[...folders.map((d) => `_interactions/${d}`)].forEach((d) => {
 			this.utils.queryFiles(d, { extension: "js" }).forEach((dir) => {
 				const data = require(`../${dir}`);
-				delete data.exec;
+				delete require.cache[require.resolve(`../${dir}`)]
 				if (!data || !data.config) return console.log(this.utils.colorized(`[$rClient$0] $rThe file ${dir} was ignored because he doesn't have required data.$0`));
-				this.database.interactions.cmd.set(data.config.name, { ...data, path: dir });
+				this.database.interactions.cmd.set(data.config.name, new Command({ ...data, path: dir, __resolvedPath: require.resolve( `../${dir}`) }));
 				i++;
 			})
 		});

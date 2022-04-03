@@ -1,4 +1,4 @@
-class IntervalManager {
+class TimeoutManager {
 	constructor(client) {
 		this.client = client;
 		this.timeouts = new Map();
@@ -30,7 +30,7 @@ class IntervalManager {
 
 	resume(){
 		this.timeouts.forEach((itv, index) => {
-			const time = itv.args.find((a) => !isNaN(a));
+			const time = itv.args.find((a) => a.constructor.name === "Number");
 			const ellipsedTime = Date.now() - itv.paused;
 			// check if interval can be restarted
 			if(ellipsedTime >= time){
@@ -41,4 +41,4 @@ class IntervalManager {
 	}
 }
 
-module.exports = IntervalManager;
+module.exports = TimeoutManager;

@@ -24,7 +24,9 @@ class Database {
 		this.users = new Enmap({ dataDir: "_storage/_database/users", fetchAll: true });
 
 		// managers
-		this.managers = {}
+		this.managers = {
+			commands: new (require("./_interactions/CommandManager"))(client, this)
+		}
 	}
 }
 
