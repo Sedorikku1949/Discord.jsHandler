@@ -32,3 +32,42 @@ Un handler pour les bots Discord
 ## Quels langages utilisés ?
 > Nous utilisons le JavaScript, cependant, l'utilisation du C ou Rust est en réflexion pour pouvoir avoir une meilleure gestion des crashs.
 > L'utilisation de ces deux languages permettrait entre autre de créer un auto redémarrage en cas d'erreur et un gestionnaire de ressources, qui serais la bienvenue.
+
+
+
+
+# Comment l'installer ?
+> Téléchargé le fichier .zip et dézipper le dans votre dossier.
+> Ouvrer un terminal/shell et aller au dossier ( `cd` pour naviguer dans les dossiers, `pwd` pour avoir le dossier actuel )
+> Une fois dans le terminal, suivés bien ces étapes :
+```bash
+// windows
+// Vous devez installer les windows build tools, cependant, dans les dernières versions de Node ils sont déjà installés. On vous invite à vous renseigner dessus
+npm i -g --add-python-to-path --vs2015 --production windows-build-tools
+npm i -g node-gyp@latest
+
+// Puis installé les modules utilisés
+npm i 
+//    /!\  Si des erreurs apparaissent, supprimer le dossier node_modules et installés manuellement chaque module.
+
+// linux
+// Vous devez installer les build tools, cependant, dans les dernières versions de Node ils sont déjà installés. On vous invite à vous renseigner dessus
+sudo apt-get install build-essential
+
+// Puis installé les modules utilisés
+npm i 
+//    /!\  Si des erreurs apparaissent, supprimer le dossier node_modules et installés manuellement chaque module.
+```
+> Une fois ceci fait, créés un fichier `config.json` dans la racine du projet, puis copiés ce code :
+```json
+{
+  "evalAccess": ["votre id"],
+  "prefix": "&",
+  "token": "votre token ici"
+}
+```
+> Remplissés les champs requis, donc `token` et `evalAccess`, le token est évidemment obligatoire, `evalAccess` permet de gérer les personnes qui ont accès à la commande eval ( executer du code via une commande, très dangereux sans sécurité ).
+
+> Vous pouvez également personnaliser le préfix.
+
+> L'installation est terminée, il vous suffit désormais de taper `node starter.js dev` dans la console pour démarrer le handler en mode "in progress" ou `node starter` pour le démarrer tout court.
