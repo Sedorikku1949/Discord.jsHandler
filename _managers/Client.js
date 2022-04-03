@@ -1,7 +1,7 @@
 const { Client } = require("discord.js");
 const { token, prefix } = require("../config.json");
 const Database = require("./Database");
-const Command = require("./_interactions/Command");
+const Command = require("./structures/Command");
 const { readdirSync } = require("fs");
 
 class BotHandler extends Client {

@@ -1,9 +1,5 @@
 module.exports.exec = async function({ channel }){
-	return new Promise((resolve, _) => {
-		setTimeout(() => {
-			resolve("hello there, i have been edit with no restart ! And again ;)")
-		}, 1500)
-	})
+	return "hello world !";
 }
 
 module.exports.config = {
@@ -12,10 +8,12 @@ module.exports.config = {
 	category: "dev",
 	options: [],
 	system: {
-		permissions: ["staff", "dev", "u:790236382270324767", "r:869550620678434816"],
+		cooldown: 5000,
+		permissions: ["dev"],
 		deleteInvoke: false,
+		ephemeral: false,
 		defer: true,
-		slash: false,
+		slash: true,
 		classic: true,
 		user: false
 	},
