@@ -2,6 +2,7 @@ const { Client } = require("discord.js");
 const { token, prefix } = require("../config.json");
 const Database = require("./Database");
 const Command = require("./structures/Command");
+const Button = require("./structures/Button");
 const { readdirSync } = require("fs");
 
 class BotHandler extends Client {
@@ -28,7 +29,7 @@ class BotHandler extends Client {
 
 		this.eventsNames = []
 		this.loadEvents();
-		this.loadCommands();
+		this.loadInteractions();
 
 		global["database"] = this.database;
 		global["client"] = this;
@@ -49,15 +50,26 @@ class BotHandler extends Client {
 		return true;
 	}
 
-	loadCommands(){
+	loadInteractions(){
 		let i = 0;
 		const folders = [...readdirSync("_interactions").filter((d) => !d.match(/\./))];
 		[...folders.map((d) => `_interactions/${d}`)].forEach((d) => {
 			this.utils.queryFiles(d, { extension: "js" }).forEach((dir) => {
-				const data = require(`../${dir}`);
+				let data = require(`../${dir}`);
 				delete require.cache[require.resolve(`../${dir}`)]
+				switch(d.replace(/_interactions\//g, "")){
+					case "cmd": {
+						data = new Command({...data, path: dir, __resolvedPath: require.resolve(`../${dir}`)});
+						break;
+					}
+					case "buttons": {
+						data = new Button({...data, path: dir, __resolvedPath: require.resolve(`../${dir}`)});
+						break;
+					}
+				}
 				if (!data || !data.config) return console.log(this.utils.colorized(`[$rClient$0] $rThe file ${dir} was ignored because he doesn't have required data.$0`));
-				this.database.interactions.cmd.set(data.config.name, new Command({ ...data, path: dir, __resolvedPath: require.resolve( `../${dir}`) }));
+				if (!this.database.interactions[d.replace(/_interactions\//g, "")]) this.database.interactions[d.replace(/_interactions\//g, "")] = new Map();
+				this.database.interactions[d.replace(/_interactions\//g, "")].set(data.config.name, data);
 				i++;
 			})
 		});
@@ -100,7 +112,7 @@ class BotHandler extends Client {
 			this.eventsNames.map((n) => { delete this._events[n] });
 			this.eventsNames = [];
 			this.loadEvents();
-			this.loadCommands();
+			this.loadInteractions();
 			// start client and do stuff
 			this.start().then(() => {
 				this.database.intervals.intervals = intervals; this.database.intervals.resume();

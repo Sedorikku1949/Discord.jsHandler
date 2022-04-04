@@ -1,0 +1,49 @@
+const {readFileSync} = require("fs");
+
+class BaseManager {
+	constructor(client, database) {
+		this.client = client;
+		this.database = database;
+	}
+
+	async checkPermission(perms, member){
+		let access = [];
+		await Promise.all(
+				perms.map(async(p) => {
+					if ((/^u:[0-9]{17,}$/).test(p)) {
+						// user
+						const id = p.replace(/[^0-9]+/g, "");
+						access.push(id === member.id);
+					} else if ((/^u:[0-9]{17,}$/).test(p)) {
+						// user && guild
+						const guildId = p.split(/u:/)[0].replace(/[^0-9]+/g, "");
+						const userId = p.split(/u:/)[1].replace(/[^0-9]+/g, "");
+						const guild = await client.guilds.fetch(guildId).catch(() => false);
+						if (guild) access.push((await guild.members.fetch(member.id)) && (userId === member.id));
+					} else if ((/^r:[0-9]{17,}$/).test(p)) {
+						// role
+						const id = p.replace(/[^0-9]+/g, "");
+						access.push(member.roles.cache.has(id));
+					} else if ((/^g:[0-9]{17,}r:[0-9]{17,}$/).test(p)) {
+						// role && guild
+						const guildId = p.split(/r:/)[0].replace(/[^0-9]+/g, "");
+						const roleId = p.split(/r:/)[1].replace(/[^0-9]+/g, "");
+						const guild = await client.guilds.fetch(guildId).catch(() => false);
+						if (guild) {
+							const role = await guild.roles.fetch(roleId).catch(() => false);
+							if (role) access.push((await guild.members.fetch(member.id)) && (guild.members.cache.get(member.id).roles.cache.has(roleId)));
+						}
+					} else {
+						// default permissions
+						if (p === "dev") {
+							const evalAccess = JSON.parse(readFileSync("config.json", "utf-8")).evalAccess;
+							access.push(evalAccess.includes(member.id));
+						} else if (p === "staff") access.push(member.isStaff());
+					}
+				})
+		)
+		return access.length > 0 ? access.every((v) => v === true) : true;
+	}
+}
+
+module.exports = BaseManager;

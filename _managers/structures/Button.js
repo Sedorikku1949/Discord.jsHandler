@@ -1,4 +1,4 @@
-class Command {
+class Button {
 	constructor(cmd) {
 		Object.entries(cmd).forEach(([k, v]) => {
 			this[k] = v
@@ -11,4 +11,4 @@ class Command {
 	translate(path, ...values){}
 }
 
-module.exports = Command;
+module.exports = Button;

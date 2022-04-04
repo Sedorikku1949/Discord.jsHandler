@@ -1,9 +1,11 @@
 const { Message, CommandInteraction, Guild } = require('discord.js');
 const Command = require("../structures/Command");
 const { readFileSync } = require("fs");
+const BaseManager = require("./BaseManager");
 
-class CommandManager {
+class CommandManager extends BaseManager {
 	constructor(client, database) {
+		super(client, database);
 		this.client = client;
 		this.database = database;
 		this.commands = this.database.interactions.cmd;
@@ -68,10 +70,10 @@ class CommandManager {
 
 	commandError(interaction, err, cmd){
 		console.error(err);
-		if (interaction instanceof Message) interaction.reply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${err.message || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
+		if (interaction instanceof Message) interaction.reply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${(String(err).split("\n")[0] ?? "\u200b") || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
 		else {
-			if (cmd.config.system.defer) interaction.deferReply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${err.message || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
-			else interaction.reply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${err.message || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
+			if (cmd.config.system.defer) interaction.deferReply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${(String(err).split("\n")[0] ?? "\u200b") || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
+			else interaction.reply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${(String(err).split("\n")[0] ?? "\u200b") || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
 		}
 	}
 
@@ -131,45 +133,6 @@ class CommandManager {
 		const args = object instanceof Message ? (object.content.slice(prefix).trim().split(/\s+/g).slice(1).map((t) => ({ value:t, name:undefined, type:undefined }) )) : object instanceof CommandInteraction? (data.map(t=>{ t.type = type[t.type] ?? t.type; return t })):undefined
 
 		return args === undefined ? [] : new Proxy(args, handler)
-	}
-
-	async checkPermission(perms, member){
-		let access = [];
-		await Promise.all(
-				perms.map(async(p) => {
-				if ((/^u:[0-9]{17,}$/).test(p)) {
-					// user
-					const id = p.replace(/[^0-9]+/g, "");
-					access.push(id === member.id);
-				} else if ((/^u:[0-9]{17,}$/).test(p)) {
-					// user && guild
-					const guildId = p.split(/u:/)[0].replace(/[^0-9]+/g, "");
-					const userId = p.split(/u:/)[1].replace(/[^0-9]+/g, "");
-					const guild = await client.guilds.fetch(guildId).catch(() => false);
-					if (guild) access.push((await guild.members.fetch(member.id)) && (userId === member.id));
-				} else if ((/^r:[0-9]{17,}$/).test(p)) {
-					// role
-					const id = p.replace(/[^0-9]+/g, "");
-					access.push(member.roles.cache.has(id));
-				} else if ((/^g:[0-9]{17,}r:[0-9]{17,}$/).test(p)) {
-					// role && guild
-					const guildId = p.split(/r:/)[0].replace(/[^0-9]+/g, "");
-					const roleId = p.split(/r:/)[1].replace(/[^0-9]+/g, "");
-					const guild = await client.guilds.fetch(guildId).catch(() => false);
-					if (guild) {
-						const role = await guild.roles.fetch(roleId).catch(() => false);
-						if (role) access.push((await guild.members.fetch(member.id)) && (guild.members.cache.get(member.id).roles.cache.has(roleId)));
-					}
-				} else {
-					// default permissions
-					if (p === "dev") {
-						const evalAccess = JSON.parse(readFileSync("config.json", "utf-8")).evalAccess;
-						access.push(evalAccess.includes(member.id));
-					} else if (p === "staff") access.push(member.isStaff());
-				}
-			})
-		)
-		return access.length > 0 ? access.every((v) => v === true) : true;
 	}
 }
 
