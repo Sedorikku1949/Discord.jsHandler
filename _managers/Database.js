@@ -25,7 +25,8 @@ class Database {
 
 		// managers
 		this.managers = {
-			commands: new (require("./_interactions/CommandManager"))(client, this)
+			commands: new (require("./_interactions/CommandManager"))(client, this),
+			buttons: new (require("./_interactions/ButtonManager"))(client, this),
 		}
 	}
 }

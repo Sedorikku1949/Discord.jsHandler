@@ -53,8 +53,8 @@ class CommandManager extends BaseManager {
 
 			// try catch
 			try {
-				cmdExecutable = new Command(cmdExecutable);
-				database.interactions.cmd.set(cmd.config.name, { ...cmdExecutable, path: cmd.path });
+				cmdExecutable = new Command({ ...cmdExecutable, path: cmd.path, __resolvePath: cmd.__resolvePath });
+				database.interactions.cmd.set(cmd.config.name, cmdExecutable);
 				const res = await cmdExecutable.exec(this.parseArguments(interaction, cmd));
 				if (!res || !["Object", "String"].some((t) => res.constructor.name === t)) return void 0;
 				if (interaction instanceof Message) interaction.reply(res).catch((err) => this.commandError(interaction, err, cmd));

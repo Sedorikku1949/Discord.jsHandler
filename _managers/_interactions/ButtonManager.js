@@ -1,14 +1,12 @@
 const BaseManager = require("./BaseManager");
 const { ButtonInteraction } = require("discord.js");
 const { parse } = require("querystring");
+const Button = require("../structures/Button");
 
 class ButtonManager extends BaseManager {
 	constructor(client, database) {
 		super(client, database);
-
-		this.buttons = database.interactions.buttons;
-
-		this.regex = /^(\w+)(?:&\w+=([^&\s]*))+$/
+		this.regex = /^(\w+)(?:&\w+=([^&\s]*))*$/;
 	}
 
 	async execute(interaction){
@@ -16,16 +14,23 @@ class ButtonManager extends BaseManager {
 
 		if (!interaction.customId.match(this.regex)) return void 1;
 		const name = interaction.customId.replace(this.regex, "$1");
-		console.log(name);
 
-		const itv = this.buttons.find((e) => e.config.name.replace(this.regex, "$1") === name);
+		const itv = this.buttons.find((e) => e.config.id.replace(this.regex, "$1") === name);
 		if (!itv) return interaction.reply({ content: "> ❌ **Je n'ai pas trouvé d'interactions associée à ce bouton, il semblerait que le bouton ne soit plus valide.**", ephemeral: true });
 
-
 		try {
-			const executable = false;
-
-			executable.exec(this.parseOptions(interaction, name))
+			let executable = require(`../../${itv.path}`);
+			executable = new Button({...executable, path: itv.path, __resolvedPath: itv.__resolvedPath });
+			delete require.cache[itv.__resolvedPath];
+			database.interactions.buttons.set(executable.config.id, executable);
+			if (JSON.stringify(itv) !== JSON.stringify(executable)) this.buttons = [...database.interactions.buttons].map(([_,v]) => v);
+			if (executable.config.defer) await interaction.deferReply();
+			const res = await executable.exec(await this.parseOptions(interaction, name));
+			if (!["String", "Object"].some((t) => res.constructor.name === t)) return void 0;
+			else {
+				if (executable.config.defer) await interaction.editReply(res);
+				else interaction.reply(res);
+			}
 		}
 		catch(err) {
 			this.error(interaction, err)
@@ -34,17 +39,18 @@ class ButtonManager extends BaseManager {
 
 	error(interaction, err){
 		console.log(err);
-		interaction.reply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${String(err).split("\n")[0] ?? "\u200b" || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
+		interaction.reply({ content: `> :x: **Une erreur est survenue.**\n\`\`\`js\n${(String(err).split("\n")[0] ?? "\u200b") || "Error"}\`\`\``, ephemeral: true }).catch(() => false);
 	}
 
 	async parseOptions(interaction, name){
 		return new Promise(async(resolve, _) => {
 			resolve({
 				args: this.parseArgs(interaction.customId, name),
-				author: interaction.author,
+				author: interaction.user,
 				guild: interaction.guild,
 				member: (interaction.guild ? await interaction.guild.members.fetch(interaction.user.id) : null),
 				permissions: interaction.memberPermissions || null,
+				message: interaction.message,
 				interaction, name
 			})
 		})
@@ -52,9 +58,12 @@ class ButtonManager extends BaseManager {
 
 	parseArgs(customId, name){
 		const str = customId.replace(new RegExp(name, "g"), "");
-		console.log(str)
-		if (str && str.length > 0) return parse(str.replace(/&(.+)/, "$1"));
-		else return {};
+		const obj = (str && str.length > 0) ? parse(str.replace(/^&(.+)/, "$1")) : {};
+		return Object.entries(obj).reduce((a, [k, v]) => {
+			if (v === "") return a;
+			a[k] = v;
+			return a;
+		}, {});
 	}
 }
 

@@ -7,8 +7,8 @@ module.exports.exec = async function({ args, author, message }){
 }
 
 module.exports.config = {
-	id: "MESSAGE_DELETE",
-	name: "MESSAGE_DELETE",
+	id: "DELETE_MSG",
+	name: "DELETE_MSG",
 	defer: false,
 	permissions: [],
 	path: __dirname,

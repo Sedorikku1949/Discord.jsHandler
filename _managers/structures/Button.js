@@ -1,14 +1,15 @@
-class Button {
+const BaseInteraction = require("./BaseInteraction");
+
+class Button extends BaseInteraction {
 	constructor(cmd) {
+		super();
 		Object.entries(cmd).forEach(([k, v]) => {
 			this[k] = v
 		});
-		this.lang = `command['${this.config.name}']`;
+		this.lang = `buttons['${this.config.name}']`;
 		this.config.lang = this.lang;
 		if (this.exec) this.exec.bind(this);
 	}
-
-	translate(path, ...values){}
 }
 
 module.exports = Button;

@@ -33,6 +33,8 @@ class BotHandler extends Client {
 
 		global["database"] = this.database;
 		global["client"] = this;
+
+		database.managers.buttons.buttons = [...database.interactions.buttons].map(([_,v]) => v);
 	}
 
 	loadEvents(){

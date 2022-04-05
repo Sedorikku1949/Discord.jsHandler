@@ -1,5 +1,8 @@
-class Command {
+const BaseInteraction = require("./BaseInteraction");
+
+class Command extends BaseInteraction {
 	constructor(cmd) {
+		super();
 		Object.entries(cmd).forEach(([k, v]) => {
 			this[k] = v
 		});
@@ -7,8 +10,6 @@ class Command {
 		this.config.lang = this.lang;
 		if (this.exec) this.exec.bind(this);
 	}
-
-	translate(path, ...values){}
 }
 
 module.exports = Command;

@@ -1,4 +1,4 @@
-const {readFileSync} = require("fs");
+const { readFileSync } = require("fs");
 
 class BaseManager {
 	constructor(client, database) {
