@@ -62,10 +62,24 @@ function decolorize(string){
 	return string.replace(reg, "")
 }
 
+function getObjectPath(path){
+	if (!path || path?.constructor?.name !== "String") return "";
+	return path.match(/(?:\[(?:"|'|`))?(\w|\-|\/)+(?:(?:"|'|`)\])?/gm).map(e => e.match(/\[.+\]/g) ? e.slice(2, e.length-2) : e );
+}
+
+function cloneObject(obj){
+	if (!obj || obj.constructor.name !== "Object") return {};
+	let o = {};
+	Object.entries(obj).forEach(([k,v]) => {
+		o[k] = v;
+	})
+}
+
 // export all functions
 module.exports = {
 	queryFiles,
 	colorized,
 	decolorize,
-	colors
+	colors,
+	getObjectPath
 }

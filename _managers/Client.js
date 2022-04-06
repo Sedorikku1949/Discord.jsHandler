@@ -3,6 +3,7 @@ const { token, prefix } = require("../config.json");
 const Database = require("./Database");
 const Command = require("./structures/Command");
 const Button = require("./structures/Button");
+const Language = require("./structures/Language")
 const { readdirSync } = require("fs");
 
 class BotHandler extends Client {
@@ -30,6 +31,7 @@ class BotHandler extends Client {
 		this.eventsNames = []
 		this.loadEvents();
 		this.loadInteractions();
+		this.loadLanguages();
 
 		global["database"] = this.database;
 		global["client"] = this;
@@ -75,13 +77,24 @@ class BotHandler extends Client {
 				i++;
 			})
 		});
-		console.log(this.utils.colorized(`[$bClient$0] $c${i}$0 interactions has been loaded in the folders $2["${folders.map((f) => f.replace(/"/g, "\\")).join('", "')}"]$0`))
+		console.log(this.utils.colorized(`[$bClient$0] $c${i}$0 interactions has been loaded in the folders $2["${folders.map((f) => f.replace(/"/g, "\\")).join('", "')}"]$0`));
 		return true;
 	}
 
 	loadInAppEval(){
 		console.log(this.utils.colorized("[$bClient$0] starting in app eval..."))
 		this.InAppEval = require("./other/inAppEval");
+	}
+
+	loadLanguages(){
+		let i = 0;
+		this.utils.queryFiles("_storage/_langs").forEach((dir) => {
+			const lang = require(`../${dir}`);
+			if (!lang || lang.constructor.name !== "Object") return console.log(this.utils.colorized(`[$rClient$0] $rThe file ${dir} was ignored because he is not an Object.$0`));
+			this.database.langs.set(dir.replace(/_storage\/_langs\/|\.json/g, ""), new Language(dir, this));
+			i++
+		});
+		console.log(this.utils.colorized(`[$bClient$0] $c${i}$0 languages files has been loaded in the folder $2"_storage/_langs"$0`))
 	}
 
 	start(){
@@ -115,6 +128,7 @@ class BotHandler extends Client {
 			this.eventsNames = [];
 			this.loadEvents();
 			this.loadInteractions();
+			this.loadLanguages();
 			// start client and do stuff
 			this.start().then(() => {
 				this.database.intervals.intervals = intervals; this.database.intervals.resume();

@@ -12,6 +12,7 @@ Discord.Role.prototype.isStaff = function isStaff(){ return this.permissions.has
 // Guild prototypes
 Discord.Guild.prototype.getData = function getPrefix(){ return database.guilds.get(this.id) };
 Discord.Guild.prototype.getPrefix = function getPrefix(){ return (this.getData() ? (this.getData().prefix || client.prefix) : client.prefix) };
+Discord.Guild.prototype.getLang = function getLang(){ return (this.getData() ? (this.getData().lang || "fr") : "fr") };
 
 // slash commands
 Discord.Guild.prototype.registerSlash = async function registerSlash(){

@@ -1,4 +1,5 @@
 const Enmap = require("enmap");
+const { readFileSync } = require("fs");
 
 class Database {
 	constructor(client) {
@@ -19,15 +20,23 @@ class Database {
 		}
 
 		// database
-		this.system = new Enmap({ dataDir: "_storage/_database/system", fetchAll: true });
-		this.guilds = new Enmap({ dataDir: "_storage/_database/guilds", fetchAll: true });
-		this.users = new Enmap({ dataDir: "_storage/_database/users", fetchAll: true });
+		this.system = new Enmap({ name: "system", dataDir: "_storage/_database/system" });
+		this.guilds = new Enmap({ name: "guilds", dataDir: "_storage/_database/guilds" });
+		this.users = new Enmap({ name: "users", dataDir: "_storage/_database/users" });
 
 		// managers
 		this.managers = {
 			commands: new (require("./_interactions/CommandManager"))(client, this),
 			buttons: new (require("./_interactions/ButtonManager"))(client, this),
 		}
+
+		// langs
+		this.langs = new Map();
+		// emojis
+		this.emojis = {};
+		// config
+		const cfg = readFileSync("_storage/configuration.json", "utf-8");
+		this.config = JSON.parse(cfg);
 	}
 }
 

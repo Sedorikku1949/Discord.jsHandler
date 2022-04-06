@@ -1,5 +1,5 @@
-module.exports.exec = async function({ channel }){
-	return "hello world !";
+module.exports.exec = async function({ guild }){
+	return this.translate(guild.getLang(), "/assets.text", "hello world!")
 }
 
 module.exports.config = {

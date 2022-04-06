@@ -1,6 +1,5 @@
 const { Message, CommandInteraction, Guild } = require('discord.js');
 const Command = require("../structures/Command");
-const { readFileSync } = require("fs");
 const BaseManager = require("./BaseManager");
 
 class CommandManager extends BaseManager {

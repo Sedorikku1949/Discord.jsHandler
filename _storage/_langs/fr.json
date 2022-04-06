@@ -1,0 +1,25 @@
+{
+  "name": "Français",
+  "code": "fr",
+  "translators": ["Sedorriku#0001"],
+  "commands": {
+
+    "test": {
+      "description": "C'est une commande test",
+      "use": "$1test",
+      "assets": {
+        "text": {
+          "content": "hello world!",
+          "embeds": [{
+            "title": "test",
+            "description": "<emj:check>\n<emj:vbidefoguioder>\nTest des arguments:\n$1"
+          }]
+        }
+      }
+    }
+
+  },
+  "buttons": {},
+  "select_menu": {},
+  "logs": {}
+}
