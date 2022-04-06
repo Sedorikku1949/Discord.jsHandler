@@ -2,6 +2,10 @@ const { Message, CommandInteraction, Guild } = require('discord.js');
 const Command = require("../structures/Command");
 const BaseManager = require("./BaseManager");
 
+
+/**
+ * TODO update cooldown to specific command ( one cooldown per command )
+ */
 class CommandManager extends BaseManager {
 	constructor(client, database) {
 		super(client, database);

@@ -6,9 +6,10 @@ const Button = require("./structures/Button");
 const Language = require("./structures/Language")
 const { readdirSync } = require("fs");
 
-class BotHandler extends Client {
+class MainHandler extends Client {
 	constructor(options) {
 		super(options);
+		
 		console.log("\x1b[32mClient initialisation...\x1b[0m")
 		// initiate first variables
 		this.prefix = prefix;
@@ -122,7 +123,9 @@ class BotHandler extends Client {
 			// destroy client
 			if (this.isReady()) this.destroy();
 			// reload database
+			const options = this.database.options;
 			this.database = new Database(this);
+			this.database.options = options;
 			// reload events && commands
 			this.eventsNames.map((n) => { delete this._events[n] });
 			this.eventsNames = [];
@@ -141,4 +144,4 @@ class BotHandler extends Client {
 	}
 }
 
-module.exports = BotHandler;
+module.exports = MainHandler;

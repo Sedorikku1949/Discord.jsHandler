@@ -1,6 +1,6 @@
-const Client = require("./_managers/Client");
+const MainHandler = require("./_managers/Client");
 
-const client = new Client({
+const client = new MainHandler({
 	intents: 79743,
 	partials: ["CHANNEL"],
 	fetchAllMembers: true,

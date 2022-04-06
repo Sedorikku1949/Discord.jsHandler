@@ -16,6 +16,16 @@
           }]
         }
       }
+    },
+    "restart": {
+      "description": "Permet le redémarrage du bot.",
+      "use": "Aucun argument requis.",
+      "assets": {
+        "content": "> <emj:error> ** ** <@$1>, **redémarrage en cours...**",
+        "allowedMentions": {
+          "users": ["$1"]
+        }
+      }
     }
 
   },

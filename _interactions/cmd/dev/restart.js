@@ -1,8 +1,8 @@
-module.exports.exec = async function({ options, args, author, channel, guild, member, permissions, interaction }){
+module.exports.exec = async function({ author, channel, guild, interaction }){
 	if (author.id !== database.config.ownerId) return null;
 	console.log(client.utils.colorized("Restart !$0"))
 	await interaction.reply(this.translate(guild.getLang(), "/assets", author.id));
-	client.restart(() => client.channels.fetch(channel.id).then((chl) => chl.send(`> **Redémarrage réussi !**`)).catch(() => false))
+	await client.restart(() => client.channels.fetch(channel.id).then((chl) => chl.send(`> **Redémarrage réussi !**`)).catch(() => false))
 }
 
 module.exports.config = {

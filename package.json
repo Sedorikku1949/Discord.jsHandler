@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node starter dev",
+    "start": "node starter"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Sedorriku#1949",
+  "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^7.5.0",
     "discord-modals": "^1.3.3",

@@ -35,6 +35,9 @@ class BaseManager {
 						}
 					} else {
 						// default permissions
+						if (p === "owner") {
+							access.push(this.database.config.ownerId ? (this.database.config.ownerId === member.id) : true);
+						}
 						if (p === "dev") {
 							const evalAccess = JSON.parse(readFileSync("config.json", "utf-8")).evalAccess;
 							access.push(evalAccess.includes(member.id));
