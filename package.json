@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node starter dev",
-    "start": "node starter"
+    "origin-dev": "node starter dev",
+    "origin-start": "node starter",
+    "dev": "HandlerStarter.exe starter.js dev",
+    "start": "HandlerStarter.exe starter.js"
   },
   "keywords": [],
   "author": "Sedorriku#1949",
