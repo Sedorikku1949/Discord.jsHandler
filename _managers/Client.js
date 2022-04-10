@@ -3,6 +3,7 @@ const { token, prefix } = require("../config.json");
 const Database = require("./Database");
 const Command = require("./structures/Command");
 const Button = require("./structures/Button");
+const SelectMenu = require("./structures/SelectMenuInteraction");
 const Language = require("./structures/Language")
 const { readdirSync } = require("fs");
 
@@ -36,8 +37,9 @@ class MainHandler extends Client {
 
 		global["database"] = this.database;
 		global["client"] = this;
-
+		
 		database.managers.buttons.buttons = [...database.interactions.buttons].map(([_,v]) => v);
+		database.managers.select_menu.select_menu = [...database.interactions.select_menu].map(([_,v]) => v);
 	}
 
 	loadEvents(){
@@ -69,6 +71,10 @@ class MainHandler extends Client {
 					}
 					case "buttons": {
 						data = new Button({...data, path: dir, __resolvedPath: require.resolve(`../${dir}`)});
+						break;
+					}
+					case "select_menu": {
+						data = new SelectMenu({...data, path: dir, __resolvedPath: require.resolve(`../${dir}`)});
 						break;
 					}
 				}
@@ -132,6 +138,9 @@ class MainHandler extends Client {
 			this.loadEvents();
 			this.loadInteractions();
 			this.loadLanguages();
+			// reload buttons and select menu
+			database.managers.buttons.buttons = [...database.interactions.buttons].map(([_,v]) => v);
+			database.managers.select_menu.select_menu = [...database.interactions.select_menu].map(([_,v]) => v);
 			// start client and do stuff
 			this.start().then(() => {
 				this.database.intervals.intervals = intervals; this.database.intervals.resume();

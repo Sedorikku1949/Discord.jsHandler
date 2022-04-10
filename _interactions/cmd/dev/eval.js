@@ -40,6 +40,7 @@ module.exports.config = {
 		deleteInvoke: false,
 		defer: true,
 		ephemeral: 1,
+		response: 1,
 		slash: true,
 		classic: true,
 		user: false

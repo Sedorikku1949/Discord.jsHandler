@@ -73,6 +73,21 @@ function cloneObject(obj){
 	Object.entries(obj).forEach(([k,v]) => {
 		o[k] = v;
 	})
+	return o;
+}
+
+function cloneArray(arr){
+	if (!arr || arr.constructor.name !== "Array") return [];
+	let res = [];
+	arr.forEach((v) => res.push(v));
+	return res;
+}
+
+function cloneString(str){
+	if (!str || str.constructor.name !== "String") return "";
+	let s = "";
+	str.split("").forEach((c) => s += c);
+	return s;
 }
 
 // export all functions
@@ -81,5 +96,8 @@ module.exports = {
 	colorized,
 	decolorize,
 	colors,
-	getObjectPath
+	getObjectPath,
+	cloneObject,
+	cloneArray,
+	cloneString
 }

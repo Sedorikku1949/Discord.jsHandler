@@ -12,6 +12,7 @@ module.exports.config = {
 		permissions: ["dev"],
 		deleteInvoke: false,
 		ephemeral: false,
+		response: 1,
 		defer: true,
 		slash: true,
 		classic: true,

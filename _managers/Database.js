@@ -20,6 +20,7 @@ class Database {
 		}
 
 		// database
+		
 		this.system = new Enmap({ name: "system", dataDir: "_storage/_database/system" });
 		this.guilds = new Enmap({ name: "guilds", dataDir: "_storage/_database/guilds" });
 		this.users = new Enmap({ name: "users", dataDir: "_storage/_database/users" });
@@ -28,6 +29,7 @@ class Database {
 		this.managers = {
 			commands: new (require("./_interactions/CommandManager"))(client, this),
 			buttons: new (require("./_interactions/ButtonManager"))(client, this),
+			select_menu: new (require("./_interactions/SelectMenuManager"))(client, this)
 		}
 
 		// langs
@@ -37,6 +39,7 @@ class Database {
 		// config
 		const cfg = readFileSync("_storage/configuration.json", "utf-8");
 		this.config = JSON.parse(cfg);
+		this.constants = require("./Constants");
 	}
 }
 

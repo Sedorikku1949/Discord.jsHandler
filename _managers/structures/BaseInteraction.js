@@ -1,3 +1,5 @@
+const { cloneObject, cloneArray, cloneString } = require("../Utils")
+
 class BaseInteraction {
 	constructor(){
 		this.__translateArgs = [
@@ -17,7 +19,7 @@ class BaseInteraction {
 	 * @param lang
 	 * @param path -> if path start with "/", the path is from the command.
 	 * @param args -> args to provide to the text
-	 * @returns {string}
+	 * @returns {{}|[]|String}
 	 */
 	translate(lang, path, ...args) {
 		return this.__translate(lang, ((/^\/.+/).test(path) ? this.lang + (path.startsWith("/[") ? path.replace(/^\/(.+)/, "$1") : path.replace(/^\/(.+)/, ".$1")) : path), args);
@@ -36,7 +38,7 @@ class BaseInteraction {
 		const lang = database.langs.get(langName);
 		if (!lang) return "ERROR_LANG_NOT_FOUND";
 		const data = lang.getValue(path);
-		if (!data || !["String", "Object", "Array"].some((e) => data.constructor.name !== e)) return "ERROR_DATA_NOT_FOUND";
+		if (!data || !["String", "Object", "Array"].some((e) => data.constructor.name !== e)) return data;
 		else return this.__translateReplace(data, this.__translateArgs, args);
 	}
 
@@ -49,32 +51,30 @@ class BaseInteraction {
 	 * @private
 	 */
 	__translateReplace(data, translateArgs, args){
-		if (!data?.constructor?.name) return "ERROR_DATA_NOT_ACCEPTABLE"
+		if (!data?.constructor?.name) return data;
 		const type = data.constructor.name.trim().toLowerCase();
 		switch(type){
 			case "string": {
-				data = data.replace(/\$[1-9](?:[0-9]+)?/, (w, index) => {
-					const i = Number(w.replace(/[^0-9]/g, "")) - 1;
-					if (!args[i]) return w;
-					else return args[i]
-				});
+				let str = data.replace(/\$[1-9](?:[0-9]+)?/g, (match) => args[Number(match.replace(/[^\d]+/g, ""))-1])
 				translateArgs.forEach(({ regex, exec }) => {
-					if (regex.test(data)) data = data.replace(regex, (str, index) => exec(str, regex, index));
-				})
-				break;
+					if (regex.test(data)) str = str.replace(regex, (str, index) => exec(str, regex, index));
+				});
+				return str;
 			}
 			case "array": {
-				data = data.map((e) => this.__translateReplace(e, translateArgs, args));
-				break;
+				return cloneArray(data).map((e) => this.__translateReplace(e, translateArgs, args));
 			}
 			case "object": {
-				Object.entries(data).forEach(([k,v]) => {
-					data[k] = this.__translateReplace(v, translateArgs, args);
-				})
-				break;
+				let o = {};
+				Object.entries(cloneObject(data)).forEach(([k,v]) => {
+					o[k] = this.__translateReplace(v, translateArgs, args);
+				});
+				return o;
+			}
+			default: {
+				return data;
 			}
 		}
-		return data
 	}
 }
 

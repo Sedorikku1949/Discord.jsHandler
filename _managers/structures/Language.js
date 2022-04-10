@@ -7,6 +7,9 @@ class Language {
 		const data = JSON.parse(readFileSync(dir).toString("utf-8"));
 		Object.entries(data).forEach(([k,v]) => {
 			this[k] = v;
+			Object.defineProperty(this, k, {
+				writable: false
+			});
 		});
 	}
 

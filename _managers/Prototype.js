@@ -5,6 +5,8 @@
 
 const Discord = require("discord.js");
 
+// Map prototype
+//Map.prototype.array = () => [...this].map(([_, v]) => v)
 
 // role prototypes
 Discord.Role.prototype.isStaff = function isStaff(){ return this.permissions.has("MANAGE_MESSAGES") };

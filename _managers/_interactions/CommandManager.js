@@ -108,7 +108,7 @@ class CommandManager extends BaseManager {
 			else if (e.name && !res[e.name]) res[e.name] = { ...e, name: e.name };
 			else res[index] = e;
 		});
-		return res;
+		return { ...res, __default: args.toSource().map(({ value, user, channel }) => value || user?.id || channel?.id).join(" ") };
 	}
 
 	parseArgs(object, prefix){
